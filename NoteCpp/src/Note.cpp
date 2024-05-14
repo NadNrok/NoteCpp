@@ -100,6 +100,36 @@ public:
 			cout << "No existing notes found." << endl;
 		}
 	}
+	void editNote() {
+		string title;
+		cout << "Enter the title of the note you want to edit: ";
+		getline(cin, title);
+
+		for (Note &note : notes) {
+			if (note.getTitle() == title) {
+				string newTitle, newContent;
+				cout << "Enter new title: ";
+				getline(cin, newTitle);
+				cout << "Enter new content: ";
+				getline(cin, newContent);
+
+				note = Note(newTitle, newContent);
+				cout << "Note edited successfully!" << endl;
+
+				ofstream outFile("notes.txt");
+				if (outFile.is_open()) {
+					for (const Note &n : notes) {
+						n.saveToFile(outFile);
+					}
+					outFile.close();
+				} else {
+					cout << "Unable to open file!" << endl;
+				}
+				return;
+			}
+		}
+		cout << "Note with title \"" << title << "\" not found." << endl;
+	}
 };
 
 int main() {
@@ -112,7 +142,8 @@ int main() {
 		cout << "1. Add Note" << endl;
 		cout << "2. Display Notes" << endl;
 		cout << "3. Delete Note" << endl;
-		cout << "4. Exit" << endl;
+		cout << "4. Edit Note" << endl;
+		cout << "5. Exit" << endl;
 		cout << "Enter your choice: ";
 		cin >> choice;
 		cin.ignore();
@@ -128,12 +159,15 @@ int main() {
 			noteManager.deleteNote();
 			break;
 		case '4':
+			noteManager.editNote();
+			break;
+		case '5':
 			cout << "Exiting program..." << endl;
 			break;
 		default:
 			cout << "Invalid choice! Please try again." << endl;
 		}
-	} while (choice != '4');
+	} while (choice != '5');
 
 	return 0;
 }
